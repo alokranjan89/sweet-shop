@@ -1,181 +1,227 @@
-🍬 Sweet Shop Management System
+🍬 Sweet Shop Management System (TDD Kata)
+
+A full-stack **Sweet Shop Management System** built as part of a **TDD Kata assessment**.
+The project demonstrates **backend API development, authentication, database usage, testing with TDD, frontend integration, and clean development practices**, augmented responsibly with AI tools.
+
+---
 
 ## 📌 Project Overview
 
-The **Sweet Shop Management System** is a full-stack application designed to manage sweets inventory for a shop.
-Users can browse and purchase sweets, while **admin users** can manage sweets inventory (add, update, restock, delete).
+The Sweet Shop Management System allows users to:
 
-The system is built using **NestJS** with **JWT-based authentication**, **role-based authorization**, persistent database storage, and **Test-Driven Development (TDD)** practices.
+* Register and log in securely
+* View available sweets
+* Search sweets by name, category, or price range
+* Purchase sweets (with inventory tracking)
 
-This project was developed as part of a **company technical assessment**.
+Admin users can:
+
+* Add new sweets
+* Update sweet details
+* Restock sweets
+* Delete sweets
+
+The system is built with **role-based access control**, **JWT authentication**, and **full test coverage** for backend logic.
 
 ---
 
-## 🛠️ Tech Stack
+## 🧱 Tech Stack
 
 ### Backend
 
-* **NestJS** (Node.js + TypeScript)
-* **TypeORM**
-* **SQLite** (persistent database)
+* **Node.js**
+* **NestJS**
+* **TypeScript**
+* **SQLite (TypeORM)**
 * **JWT Authentication**
-* **Passport.js**
-* **Swagger (OpenAPI)**
-* **Jest** (Unit Testing)
+* **Jest (Testing)**
 
-### Tools & Practices
+### Frontend
 
-* RESTful API design
-* Role-based access control (USER / ADMIN)
-* Test-Driven Development (TDD)
-* Git & GitHub version control
+* **React (Vite)**
+* **React Router**
+* **Axios**
+* **CSS (custom styling)**
 
 ---
 
-## ⚙️ Setup Instructions
-
-### 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/alokranjan89/sweet-shop.git
-cd sweet-shop/backend
-```
-
-### 2️⃣ Install Dependencies
-
-```bash
-npm install
-```
-
-### 3️⃣ Environment Variables
-
-Create `.env` file in `backend/`:
-
-```env
-JWT_SECRET=mysecretkey
-```
-
-### 4️⃣ Run Backend Server
-
-```bash
-npm run start
-```
-
-Server will run at:
+## 📂 Project Structure
 
 ```
-http://localhost:3000
+sweet-shop/
+├── backend/
+│   ├── screenshots/
+│   ├── src/
+│   ├── test/
+│   ├── .env.example
+│   ├── package.json
+│   └── README.md
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── README.md
+│
+└── README.md
 ```
 
 ---
 
-## 📘 API Documentation (Swagger)
+## 🔐 Authentication & Roles
 
-Swagger UI is available at:
+* **JWT-based authentication**
+* Two roles:
 
-```
-http://localhost:3000/api
-```
-
-You can:
-
-* Register / Login users
-* Authorize with JWT
-* Test all protected endpoints
+  * `USER`
+  * `ADMIN`
+* Protected routes using Guards
+* Admin-only access for sensitive operations (add, update, delete sweets)
 
 ---
 
-## 🔐 Authentication & Authorization
+## 🚀 Backend API Endpoints
 
-* JWT-based authentication
-* Two roles supported:
+### Auth
 
-  * **USER**
-  * **ADMIN**
+| Method | Endpoint             | Description     |
+| ------ | -------------------- | --------------- |
+| POST   | `/api/auth/register` | Register user   |
+| POST   | `/api/auth/login`    | Login & get JWT |
 
-### Role Permissions
+### Sweets (Protected)
 
-| Action         | USER | ADMIN |
-| -------------- | ---- | ----- |
-| View sweets    | ✅    | ✅     |
-| Purchase sweet | ✅    | ✅     |
-| Add sweet      | ❌    | ✅     |
-| Update sweet   | ❌    | ✅     |
-| Restock sweet  | ❌    | ✅     |
-| Delete sweet   | ❌    | ✅     |
+| Method | Endpoint             | Access |
+| ------ | -------------------- | ------ |
+| POST   | `/api/sweets`        | Admin  |
+| GET    | `/api/sweets`        | User   |
+| GET    | `/api/sweets/search` | User   |
+| PUT    | `/api/sweets/:id`    | Admin  |
+| DELETE | `/api/sweets/:id`    | Admin  |
 
-Unauthorized actions return **403 Forbidden**.
+### Inventory
 
----
-
-## 🍭 API Features
-
-### Auth APIs
-
-* `POST /api/auth/register`
-* `POST /api/auth/login`
-
-### Sweets APIs (Protected)
-
-* `POST /api/sweets` (Admin only)
-* `GET /api/sweets`
-* `GET /api/sweets/search`
-* `PUT /api/sweets/:id` (Admin only)
-* `DELETE /api/sweets/:id` (Admin only)
-
-### Inventory APIs
-
-* `POST /api/sweets/:id/purchase`
-* `POST /api/sweets/:id/restock` (Admin only)
+| Method | Endpoint                   | Access |
+| ------ | -------------------------- | ------ |
+| POST   | `/api/sweets/:id/purchase` | User   |
+| POST   | `/api/sweets/:id/restock`  | Admin  |
 
 ---
 
 ## 🧪 Testing (TDD)
 
-Unit tests are written using **Jest** following **TDD principles**.
+* Tests written using **Jest**
+* Service-level unit tests
+* Followed **Red → Green → Refactor**
+* All tests passing
 
-### Run Tests
+### Run tests
 
 ```bash
+cd backend
 npm run test
 ```
 
-### Covered Tests
+📸 **Test results screenshots are included in**:
 
-* AuthService unit tests
-* SweetsService unit tests
+```
+backend/screenshots/
+```
 
-All tests pass successfully.
+---
+
+## 🖥️ Frontend Features
+
+* Registration & Login forms
+* Sweet listing dashboard
+* Search & filter sweets
+* Purchase button (disabled when quantity = 0)
+* Admin panel for managing sweets
+* Responsive, clean UI
+
+---
+
+## ⚙️ How to Run Locally
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run start
+```
+
+Backend runs on:
+
+```
+http://localhost:3000
+```
+
+Swagger UI:
+
+```
+http://localhost:3000/api
+```
+
+---
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on:
+
+```
+http://localhost:5173
+```
 
 ---
 
 ## 📸 Screenshots
 
-Screenshots are available in the [`screenshots/`](./screenshots) folder.
+Screenshots of:
 
-Included screenshots:
+* User registration
+* Login
+* Sweet list
+* Search functionality
+* Admin actions
+* Test results
 
-* Swagger UI
-* User registration success
-* Login success & JWT authorization
-* Unauthorized (403) access for USER
-* Admin add/update sweet
-* Purchase sweet
-* Test results (`npm run test`)
+📁 Stored in:
+
+```
+backend/screenshots/
+```
 
 ---
 
 ## 🤖 My AI Usage (Mandatory)
 
-I used **ChatGPT** as an AI assistant during development for:
+### Tools Used
 
-* Generating initial NestJS boilerplate
-* Debugging dependency and configuration issues
-* Writing and fixing Jest unit tests
-* Improving API design and Swagger documentation
-* Understanding TDD best practices
+* **ChatGPT**
 
-All AI-generated code was reviewed, understood, and modified by me to ensure correctness and learning.
-AI significantly improved development speed and helped maintain clean coding practices.
+### How I Used AI
+
+* Generating initial boilerplate code
+* Understanding NestJS dependency injection issues
+* Writing and refining unit tests
+* Debugging JWT authentication and test failures
+* Structuring README and documentation
+
+### Reflection
+
+AI significantly improved productivity and debugging speed, especially while working with complex dependency injection and TDD workflows.
+All AI-generated code was **reviewed, understood, and manually refined** to ensure correctness and originality.
 
 ---
+## 🧑‍💻 Author
+
+**Alok Ranjan**
+B.Tech – Electronics & Communication Engineering
+
+Just tell me 👍
