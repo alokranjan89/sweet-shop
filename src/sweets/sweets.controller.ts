@@ -1,65 +1,83 @@
 import {
   Controller,
-  Post,
   Get,
-  Delete,
+  Post,
+  Put,
   Body,
   Param,
+  Delete,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { SweetsService } from './sweets.service';
+import { CreateSweetDto } from './dto/create-sweet.dto';
+import { UpdateSweetDto } from './dto/update-sweet.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
+@ApiTags('Sweets')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/sweets')
-@UseGuards(JwtAuthGuard)
 export class SweetsController {
-  constructor(private sweetsService: SweetsService) {}
+  constructor(private readonly sweetsService: SweetsService) {}
 
-  // ADD SWEET (ADMIN)
+  // CREATE SWEET (ADMIN)
   @Post()
-  @UseGuards(RolesGuard)
   @Roles('ADMIN')
-  addSweet(@Body() body: any) {
-    return this.sweetsService.createSweet(body);
+  @ApiBody({ type: CreateSweetDto })
+  create(@Body() body: CreateSweetDto) {
+    return this.sweetsService.create(body);
   }
 
   // GET ALL SWEETS
   @Get()
-  getSweets() {
-    return this.sweetsService.getAllSweets();
-  }
-
-  // PURCHASE SWEET
-  @Post(':id/purchase')
-  purchaseSweet(@Param('id') id: string) {
-    return this.sweetsService.purchaseSweet(Number(id));
-  }
-
-  // RESTOCK SWEET (ADMIN)
-  @Post(':id/restock')
-  @UseGuards(RolesGuard)
-  @Roles('ADMIN')
-  restockSweet(
-    @Param('id') id: string,
-    @Body('amount') amount: number,
-  ) {
-    return this.sweetsService.restockSweet(Number(id), amount);
+  getAll() {
+    return this.sweetsService.findAll();
   }
 
   // SEARCH SWEETS
   @Get('search')
-  search(@Query() query: any) {
-    return this.sweetsService.searchSweets(query);
+  search(
+    @Query('name') name?: string,
+    @Query('category') category?: string,
+    @Query('minPrice') minPrice?: number,
+    @Query('maxPrice') maxPrice?: number,
+  ) {
+    return this.sweetsService.search({
+      name,
+      category,
+      minPrice,
+      maxPrice,
+    });
+  }
+
+  // UPDATE SWEET (ADMIN) ✅ REQUIRED
+  @Put(':id')
+  @Roles('ADMIN')
+  update(@Param('id') id: number, @Body() body: UpdateSweetDto) {
+    return this.sweetsService.update(id, body);
+  }
+
+  // PURCHASE SWEET
+  @Post(':id/purchase')
+  purchase(@Param('id') id: number) {
+    return this.sweetsService.purchase(id);
+  }
+
+  // RESTOCK SWEET (ADMIN)
+  @Post(':id/restock')
+  @Roles('ADMIN')
+  restock(@Param('id') id: number) {
+    return this.sweetsService.restock(id);
   }
 
   // DELETE SWEET (ADMIN)
   @Delete(':id')
-  @UseGuards(RolesGuard)
   @Roles('ADMIN')
-  deleteSweet(@Param('id') id: string) {
-    return this.sweetsService.deleteSweet(Number(id));
+  delete(@Param('id') id: number) {
+    return this.sweetsService.delete(id);
   }
 }

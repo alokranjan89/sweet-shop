@@ -11,7 +11,7 @@ export class Sweet {
   @Column()
   category: string;
 
-  @Column('decimal')
+  @Column()
   price: number;
 
   @Column()

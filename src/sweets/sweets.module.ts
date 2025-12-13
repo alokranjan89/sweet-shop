@@ -6,7 +6,7 @@ import { SweetsController } from './sweets.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Sweet])],
-  providers: [SweetsService],
   controllers: [SweetsController],
+  providers: [SweetsService],
 })
 export class SweetsModule {}
