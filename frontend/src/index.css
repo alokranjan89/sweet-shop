@@ -1,0 +1,76 @@
+/* Reset & full height */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Global theme */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #111;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links */
+a {
+  font-weight: 500;
+  color: #4caf50;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #66bb6a;
+}
+
+/* Headings */
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Buttons (base, overridden in App.css if needed) */
+button {
+  border-radius: 6px;
+  border: none;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1e1e1e;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:focus-visible {
+  outline: 2px solid #4caf50;
+}
+
+/* Inputs */
+input {
+  font-family: inherit;
+  font-size: 1em;
+}
+
+
+body {
+  background-color: #111;
+}
