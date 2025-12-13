@@ -1,68 +1,65 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
-import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user.entity';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-/* ---------------- MOCK BCRYPT ---------------- */
-jest.mock('bcrypt', () => ({
-  hash: jest.fn(),
-  compare: jest.fn(),
-}));
-
-/* ---------------- MOCK REPOSITORY ---------------- */
-const mockUserRepository = {
-  findOne: jest.fn(),
-  create: jest.fn(),
-  save: jest.fn(),
-};
+jest.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
+
+  const mockUserRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockJwtService = {
+    sign: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        JwtService,
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
+        },
+        {
+          provide: JwtService, // ✅ FIXED
+          useValue: mockJwtService,
         },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-
-    // reset mocks before each test
     jest.clearAllMocks();
   });
 
   it('should register a user', async () => {
-    mockUserRepository.findOne.mockResolvedValue(null);
+    // mock bcrypt hash
+    (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
     mockUserRepository.create.mockReturnValue({
       email: 'test@test.com',
-      password: 'hashed-password',
-      role: 'USER',
+      password: 'hashedPassword',
     });
 
     mockUserRepository.save.mockResolvedValue({
       id: 1,
       email: 'test@test.com',
-      password: 'hashed-password',
-      role: 'USER',
+      password: 'hashedPassword',
     });
 
-    (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
+    const result = await service.register('test@test.com', '123456');
 
-    const result = await service.register({
-      email: 'test@test.com',
-      password: '123456',
+    expect(result).toEqual({
+      message: 'User registered successfully',
     });
 
-    expect(result.email).toBe('test@test.com');
     expect(bcrypt.hash).toHaveBeenCalledWith('123456', 10);
     expect(mockUserRepository.create).toHaveBeenCalled();
     expect(mockUserRepository.save).toHaveBeenCalled();

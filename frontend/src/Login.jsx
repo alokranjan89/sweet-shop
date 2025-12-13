@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api, { setToken } from "./api";
+import api from "./api";
 import "./App.css";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,20 +19,13 @@ export default function Login() {
         password,
       });
 
-      // ✅ token MUST exist now
-      const token = res.data.token;
-
-      if (!token) {
+      if (res.data?.token) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/sweets");
+      } else {
         setError("Login failed: token not received");
-        return;
       }
-
-      localStorage.setItem("token", token);
-      setToken(token);
-
-      navigate("/sweets");
     } catch (err) {
-      console.error(err);
       setError("Invalid email or password");
     }
   };

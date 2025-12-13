@@ -5,7 +5,6 @@ import "./App.css";
 
 export default function Register() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,15 +14,9 @@ export default function Register() {
     setError("");
 
     try {
-      await api.post("/auth/register", {
-        email,
-        password,
-      });
-
-      // after successful register → go to login
+      await api.post("/auth/register", { email, password });
       navigate("/login");
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Registration failed");
     }
   };

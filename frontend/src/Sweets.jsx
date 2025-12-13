@@ -6,21 +6,14 @@ export default function Sweets() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchSweets = async () => {
-      try {
-        const res = await api.get("/sweets"); // ✅ FIXED
-        setSweets(res.data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load sweets");
-      }
-    };
-
-    fetchSweets();
+    api
+      .get("/sweets")
+      .then((res) => setSweets(res.data))
+      .catch(() => setError("Failed to load sweets"));
   }, []);
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div style={{ padding: "20px" }}>
       <h2>Available Sweets</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -28,9 +21,12 @@ export default function Sweets() {
       {sweets.length === 0 && <p>No sweets available</p>}
 
       <ul>
-        {sweets.map((sweet) => (
-          <li key={sweet.id}>
-            <b>{sweet.name}</b> | ₹{sweet.price} | Qty: {sweet.quantity}
+        {sweets.map((s) => (
+          <li key={s.id}>
+            {s.name} ₹{s.price} | Qty: {s.quantity}
+            <button disabled={s.quantity === 0} style={{ marginLeft: "10px" }}>
+              Purchase
+            </button>
           </li>
         ))}
       </ul>

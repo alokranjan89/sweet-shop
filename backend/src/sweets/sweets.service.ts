@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sweet } from './sweet.entity';
 import { CreateSweetDto } from './dto/create-sweet.dto';
-import { UpdateSweetDto } from './dto/update-sweet.dto';
 
 @Injectable()
 export class SweetsService {
@@ -23,7 +26,7 @@ export class SweetsService {
     return this.sweetsRepository.find();
   }
 
-  // SEARCH SWEETS
+  // 🔍 SEARCH SWEETS
   search(filters: {
     name?: string;
     category?: string;
@@ -44,13 +47,13 @@ export class SweetsService {
       });
     }
 
-    if (filters.minPrice) {
+    if (filters.minPrice !== undefined) {
       query.andWhere('sweet.price >= :minPrice', {
         minPrice: filters.minPrice,
       });
     }
 
-    if (filters.maxPrice) {
+    if (filters.maxPrice !== undefined) {
       query.andWhere('sweet.price <= :maxPrice', {
         maxPrice: filters.maxPrice,
       });
@@ -68,7 +71,7 @@ export class SweetsService {
     }
 
     if (sweet.quantity <= 0) {
-      throw new NotFoundException('Sweet out of stock');
+      throw new BadRequestException('Sweet out of stock');
     }
 
     sweet.quantity -= 1;
@@ -76,28 +79,14 @@ export class SweetsService {
   }
 
   // RESTOCK SWEET (ADMIN)
-  async restock(id: number) {
+  async restock(id: number, amount = 10) {
     const sweet = await this.sweetsRepository.findOne({ where: { id } });
 
     if (!sweet) {
       throw new NotFoundException('Sweet not found');
     }
 
-    sweet.quantity += 10;
-    return this.sweetsRepository.save(sweet);
-  }
-
-  // UPDATE SWEET (ADMIN) ✅ REQUIRED BY ASSESSMENT
-  async update(id: number, dto: UpdateSweetDto) {
-    const sweet = await this.sweetsRepository.findOne({
-      where: { id },
-    });
-
-    if (!sweet) {
-      throw new NotFoundException('Sweet not found');
-    }
-
-    Object.assign(sweet, dto);
+    sweet.quantity += amount;
     return this.sweetsRepository.save(sweet);
   }
 

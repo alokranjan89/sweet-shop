@@ -4,13 +4,16 @@ const api = axios.create({
   baseURL: "http://localhost:3000/api",
 });
 
-export const setToken = (token) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-};
-
-const token = localStorage.getItem("token");
-if (token) {
-  setToken(token);
-}
+// ✅ Automatically attach token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;

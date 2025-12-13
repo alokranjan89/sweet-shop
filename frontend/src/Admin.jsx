@@ -18,8 +18,9 @@ export default function Admin() {
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>Admin Panel</h2>
+
       <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
       <br />
       <input placeholder="Category" onChange={(e) => setCategory(e.target.value)} />
@@ -28,6 +29,7 @@ export default function Admin() {
       <br />
       <input placeholder="Quantity" onChange={(e) => setQuantity(e.target.value)} />
       <br />
+
       <button onClick={addSweet}>Add Sweet</button>
     </div>
   );
