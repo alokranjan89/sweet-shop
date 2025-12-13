@@ -1,20 +1,20 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { User } from './user.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepo: Repository<User>,
-    private jwtService: JwtService,
+    private readonly userRepo: Repository<User>,
   ) {}
 
-  // REGISTER USER (WITH HASHING)
-  async register(email: string, password: string) {
+  // ✅ FIXED: register accepts ONE object (DTO style)
+  async register(dto: { email: string; password: string }) {
+    const { email, password } = dto;
+
     const existingUser = await this.userRepo.findOne({
       where: { email },
     });
@@ -34,35 +34,21 @@ export class AuthService {
     return this.userRepo.save(user);
   }
 
-  // LOGIN USER (WITH JWT)
-  async login(email: string, password: string) {
+  async login(dto: { email: string; password: string }) {
     const user = await this.userRepo.findOne({
-      where: { email },
+      where: { email: dto.email },
     });
 
     if (!user) {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(dto.password, user.password);
 
-    if (!isPasswordMatch) {
+    if (!isMatch) {
       throw new BadRequestException('Invalid email or password');
     }
 
-    // JWT payload
-    const payload = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
-
-    // Generate token
-    const token = this.jwtService.sign(payload);
-
-    return {
-      message: 'Login successful',
-      access_token: token,
-    };
+    return user;
   }
 }
