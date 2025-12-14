@@ -223,5 +223,3 @@ All AI-generated code was **reviewed, understood, and manually refined** to ensu
 
 **Alok Ranjan**
 B.Tech – Electronics & Communication Engineering
-
-Just tell me 👍
